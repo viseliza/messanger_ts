@@ -1,0 +1,39 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model User {
+    id          Int      @id @default(autoincrement())
+    email       String?  @unique
+    first_n     String?
+    last_n      String?
+    father_n    String?
+    novsu_login String   @unique
+    novsu_pass  String
+    role        Role     @default(STUDENT)      // todo
+    group       Group?   @relation("UserToGroup", fields: [group_id], references: [id])
+    group_id    Int?
+    
+    student     Group[] @relation("groups_student")
+}
+
+model Group {
+    id          Int      @id @default(autoincrement())
+    name        String   @unique
+    href        String?
+    student     User?    @relation("groups_student", fields: [student_id], references: [id])
+    student_id  Int?
+
+    users User[] @relation("UserToGroup")
+}
+
+
+enum Role {
+    STUDENT
+    TEACHER
+}

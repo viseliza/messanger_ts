@@ -22,6 +22,8 @@
     --tran-03: all 0.3s ease;
     --tran-04: all 0.3s ease;
     --tran-05: all 0.3s ease;
+
+	--left: 5px;
 }
 
 body {
@@ -31,12 +33,13 @@ body {
     color: var(--text-color);
 }
 
+
 ::selection {
     background-color: var(--primary-color);
     color: #fff;
 }
 
-body.dark {
+html.dark {
     --body-color: #18191a;
     --sidebar-color: #242526;
     --primary-color: #3a3b3c;
@@ -44,6 +47,7 @@ body.dark {
     --toggle-color: #fff;
     --text-color: #ccc;
     --tooltip: #222424;
+	--left: 20px;
 }
 
 
