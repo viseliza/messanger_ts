@@ -31,15 +31,27 @@ export class GroupController {
     return this.groupService.findMany({});
   }
 
-  @Post('/group/auth')
-  create(
+  @Post('/group')
+  async create(
     @Body()
     data: Prisma.GroupCreateInput,
   ): Promise<Group> {
-    return this.groupService.create(data);
+    let group = await this.groupService.get({ name: data.name })
+
+    if (!group) group = await this.groupService.create(data);
+
+    return group;
   }
 
-  @Patch('/group_update/:name')
+  @Post('/groups')
+  async push(
+    @Body()
+    data: Prisma.GroupCreateManyInput[]
+    ) {
+    return await this.groupService.createMany(data)
+  }
+
+  @Patch('/group/:name')
   update(
     @Param('name') name: string,
     @Body() updateLinkDto: Prisma.GroupUpdateInput,
@@ -50,7 +62,7 @@ export class GroupController {
     });
   }
 
-  @Delete('/group_delete/:name')
+  @Delete('/group/:name')
   delete(@Param('name') name: string) {
     return this.groupService.delete({ name });
   }

@@ -6,12 +6,11 @@ import { Group, Prisma } from '@prisma/client';
 export class GroupService {
   constructor(private prisma: PrismaService) { }
 
-  async get(where: Prisma.GroupWhereUniqueInput): Promise<Group> {
-    const group: Group = await this.prisma.group.findUnique({ where });
-    return group;
+  get(where: Prisma.GroupWhereUniqueInput): Promise<Group> {
+    return this.prisma.group.findUnique({ where });
   }
 
-  async findMany(params: {
+  findMany(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.GroupWhereUniqueInput;
@@ -22,13 +21,20 @@ export class GroupService {
     return this.prisma.group.findMany({ skip, take, cursor, where, orderBy });
   }
 
-  async create(data: Prisma.GroupCreateInput): Promise<Group> {
+  create(data: Prisma.GroupCreateInput): Promise<Group> {
     return this.prisma.group.create({
       data
     });
   }
 
-  async update(params: {
+  createMany(data: Prisma.GroupCreateManyInput[]): Promise<Prisma.BatchPayload> {
+    console.log(data)
+    return this.prisma.group.createMany({
+      data
+    });
+  }
+
+  update(params: {
     where: Prisma.GroupWhereUniqueInput;
     data: Prisma.GroupUpdateInput;
   }): Promise<Group> {
@@ -39,7 +45,7 @@ export class GroupService {
     });
   }
 
-  async delete(where: Prisma.GroupWhereUniqueInput): Promise<Group> {
+  delete(where: Prisma.GroupWhereUniqueInput): Promise<Group> {
     return this.prisma.group.delete({
       where,
     });
