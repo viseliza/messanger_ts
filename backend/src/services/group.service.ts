@@ -28,7 +28,6 @@ export class GroupService {
   }
 
   createMany(data: Prisma.GroupCreateManyInput[]): Promise<Prisma.BatchPayload> {
-    console.log(data)
     return this.prisma.group.createMany({
       data
     });

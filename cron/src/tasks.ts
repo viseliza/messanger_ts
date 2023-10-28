@@ -12,7 +12,7 @@ class Tasks {
         const url: string = 'https://portal.novsu.ru/univer/timetable/spo/';
         const AxiosInstance = axios.create();
         let data = [];
-        
+
         await AxiosInstance.get(url)
             .then(
                 response => {
@@ -28,7 +28,7 @@ class Tasks {
                 }
             )
             .catch(console.error)
-
+            
         try {
             const response = await fetch("http://localhost:3000/groups", {
                 method: "POST",

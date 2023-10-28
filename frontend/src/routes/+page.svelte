@@ -1,17 +1,10 @@
 <script lang="ts">
 	import welcome from '$lib/images/svelte-welcome.webp';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
-	// import type { PageData } from './$types';
-	// export let data: PageData;
-	// console.log(data.text)
-
-	import { onMount } from 'svelte';
-
-	let huy = null;
-	onMount(async ()=>{
-		huy = await fetch('https://api.ipify.org?format=json');
-		console.log(`Your IP: ${await huy.text()}`)
-	})
+	import type { PageData } from './$types';
+	export let data: PageData;
+	console.log(data.schedule)
+	console.log(data.replacement)
 </script>
 
 <svelte:head>

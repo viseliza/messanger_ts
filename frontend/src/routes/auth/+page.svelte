@@ -4,13 +4,13 @@
 </svelte:head>
 
 <div class="wrap-login">
-    <form class="form_login" action="">
+    <form class="form_login" method="post">
         <span class="title">Авторизация</span>
         <span>Novsu логин</span>
-        <input placeholder="Введите логин..." type="text" />
+        <input placeholder="Введите логин..." type="username" name="username" id="username" />
         <span>Novsu пароль</span>
-        <input placeholder="Введите пароль..." type="password" />
-        <button>Войти</button>
+        <input placeholder="Введите пароль..." type="password" name="password" id="password" />
+        <button type="submit">Войти</button>
     </form>
 </div>
 
