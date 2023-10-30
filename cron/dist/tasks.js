@@ -13,6 +13,22 @@ class Tasks {
             const $ = cheerio_1.default.load(html), col = $('.block_content.content:first');
             col.find('tr').each((_, row) => {
                 $(row).find('td').find('a').each(async (_, cell) => {
+                    let result = "[ ";
+                    let url_group = `https://portal.novsu.ru/search/groups/r.2500.p.search.g.3782/i.2500/?page=search&grpname=${$(cell).text()}`;
+                    if ($(cell).text() == "1992") {
+                        await AxiosInstance.get(url_group)
+                            .then(response => {
+                            const html = response.data;
+                            const $ = cheerio_1.default.load(html), col = $('.block_content.content:first');
+                            col.find('tr').each((_, row) => {
+                                $(row).find('td').find('a').each(async (_n, cell) => {
+                                    result += `, s${$(cell).attr('href').slice(8)}`;
+                                });
+                            });
+                        });
+                    }
+                    result += " ]";
+                    console.log(result.replace("[ , ", "[ "));
                     data.push({ "name": $(cell).text(), "href": $(cell).attr('href') });
                 });
             });

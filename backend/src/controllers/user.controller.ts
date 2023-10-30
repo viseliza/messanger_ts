@@ -16,9 +16,9 @@ export class UserController {
     private readonly userService: UserService,
   ) { }
 
-  @Get('/:novsu_login')
-  get(@Param('novsu_login') novsu_login: string) {
-    return this.userService.findOne({ novsu_login });
+  @Get('/:login')
+  get(@Param('login') login: string) {
+    return this.userService.findOne({ login });
   }
 
   @Post('/auth')
@@ -29,19 +29,19 @@ export class UserController {
     return this.userService.create(data);
   }
 
-  @Patch('/:novsu_login')
+  @Patch('/:login')
   update(
-    @Param('novsu_login') novsu_login: string,
+    @Param('login') login: string,
     @Body() updateLinkDto: Prisma.UserUpdateInput,
   ) {
     return this.userService.update({
-      where: { novsu_login },
+      where: { login },
       data: updateLinkDto,
     });
   }
 
-  @Delete('/:novsu_login')
-  delete(@Param('novsu_login') novsu_login: string) {
-    return this.userService.delete({ novsu_login });
+  @Delete('/:login')
+  delete(@Param('login') login: string) {
+    return this.userService.delete({ login });
   }
 }

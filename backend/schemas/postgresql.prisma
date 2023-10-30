@@ -9,23 +9,23 @@ generator client {
 
 model User {
     id          Int      @id @default(autoincrement())
-    novsu_login String   @unique
-    novsu_pass  String
+    login       String   @unique
+    password    String
     profile     Profile?
 }
 
 model Profile {
     id          Int      @id @default(autoincrement())
     email       String?  @unique
-    first_n     String?
-    last_n      String?
-    father_n    String?
+    first_name  String?
+    last_name   String?
+    father_name String?
     theme       Theme    @default(white)
     role        Role     @default(STUDENT)
-    user        User?    @relation(fields: [user_id], references: [id])
-    user_id     Int?     @unique
-    group       Group?   @relation("ProfileToGroup", fields: [group_id], references: [id])
-    group_id    Int?
+    user        User?    @relation(fields: [user_login], references: [login])
+    user_login  String?  @unique
+    group       Group?   @relation("ProfileToGroup", fields: [group_name], references: [name])
+    group_name  String?
 }
 
 model Group {
@@ -33,7 +33,7 @@ model Group {
     name        String   @unique
     href        String?
 
-    profiles Profile[] @relation("ProfileToGroup")
+    profiles    Profile[] @relation("ProfileToGroup")
 }
 
 
@@ -46,3 +46,42 @@ enum Theme {
     white
     black
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// model User {
+//     id          Int      @id @default(autoincrement())
+//     login       String   @unique
+//     profile     Profile?
+//     group       Group?
+// }
+
+// model Profile {
+//     id          Int      @id @default(autoincrement())
+//     user        User?    @relation(fields: [user_login], references: [login])
+//     user_login  String?  @unique
+//     group       Group?   @relation("ProfileToGroup", fields: [group_name], references: [name])
+//     group_name  String?
+// }
+
+// model Group {
+//     id          Int      @id @default(autoincrement())
+//     name        String   @unique
+//     href        String?
+
+//     user        User     @relation("ProfileToGroup")
+//     users       User[]
+// }

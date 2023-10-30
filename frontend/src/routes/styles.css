@@ -16,6 +16,8 @@
     --toggle-color: #ddd;
     --text-color: #707070;
     --tooltip: #192733;
+	--button-background: #242526;
+	--button-hover: #0a0a0a;
 
     /* ====== Transition ====== */
     --tran-03: all 0.2s ease;
@@ -48,6 +50,8 @@ html.dark {
     --text-color: #ccc;
     --tooltip: #222424;
 	--left: 20px;
+	--button-background: #ccc;
+	--button-hover: #8a8a8a;
 }
 
 
