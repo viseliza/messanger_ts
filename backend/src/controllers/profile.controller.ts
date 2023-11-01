@@ -21,8 +21,9 @@ import {
     ) { }
   
     @Get('/profile/:user_id')
-    get(@Param('user_id') user_id: number) {
-      return this.profileService.get({ user_id });
+    get(@Param('user_id') user_id: string) {
+      const id = Number(user_id)
+      return this.profileService.get({ user_id: id });
     }
   
     @Get('/profiles')
@@ -38,13 +39,13 @@ import {
       return this.profileService.create(data);
     }
   
-    @Patch('/profile_update/:user_id')
+    @Patch('/profile/:user_id')
     update(
-      @Param('user_id') user_id: number,
+      @Param('user_id') user_id: string,
       @Body() updateLinkDto: Prisma.ProfileUpdateInput,
     ) {
       return this.profileService.update({
-        where: { user_id },
+        where: { user_id: Number(user_id) },
         data: updateLinkDto,
       });
     }

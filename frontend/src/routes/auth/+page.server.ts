@@ -19,7 +19,7 @@ export async function load(opts: { locals: any }) {
 export const actions: Actions = {
 	default: async (event: any) => {
 		const formData = Object.fromEntries(await event.request.formData());
-
+	
 		// Verify that we have an login and a password
 		if (!formData.login || !formData.password) {
 			return fail(400, {
@@ -27,15 +27,17 @@ export const actions: Actions = {
 			});
 		}
 		const user: User = formData as { login: string; password: string };
-
+		
 		if (!await isExistUser(user.login, user.password))
 			return fail(400, { error: 'Неравильный логин или пароль. Попробуйте еще раз' });
 		
 		const fio = await isExistUser(user.login, user.password) as { firstName: string; lastName: string; midName: string }
 		
-		const user_token: JSON = JSON.parse(await User(user, fio.firstName, fio.lastName, fio.midName));
-
-		const token = jwt.sign(user_token, JWT_ACCESS_TOKEN, {
+		const user_token = JSON.parse(await User(user, fio.firstName, fio.lastName, fio.midName));
+		
+		const profile = await (await fetch(`http://localhost:3000/profile/${user_token.id}`)).json()
+		
+		const token = jwt.sign(profile, JWT_ACCESS_TOKEN, {
 			expiresIn: '1d'
 		});
 

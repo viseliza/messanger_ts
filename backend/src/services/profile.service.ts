@@ -7,8 +7,7 @@ export class ProfileService {
   constructor(private prisma: PrismaService) { }
 
   async get(where: Prisma.ProfileWhereUniqueInput): Promise<Profile> {
-    const profile: Profile = await this.prisma.profile.findUnique({ where });
-    return profile;
+    return await this.prisma.profile.findUnique({ where });
   }
 
   async findMany(params: {

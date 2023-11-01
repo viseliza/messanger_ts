@@ -18,6 +18,8 @@
     --tooltip: #192733;
 	--button-background: #242526;
 	--button-hover: #0a0a0a;
+	--box-shadow: rgba(0, 0, 0, 0.1);
+	--primary-head: #e4ddc4;
 
     /* ====== Transition ====== */
     --tran-03: all 0.2s ease;
@@ -52,6 +54,8 @@ html.dark {
 	--left: 20px;
 	--button-background: #ccc;
 	--button-hover: #8a8a8a;
+	--box-shadow:rgba(255, 255, 255, 0.1);
+	--primary-head: rgba(255, 255, 255, 0.25);
 }
 
 

@@ -8,39 +8,35 @@
     import message from "$lib/images/message.svg";
     import message_dark from "$lib/images/message_dark.svg";
 
-    let dark_mode = "";
+    let theme = $page.data.user.theme;
 
     onMount(() => {
-        if (!localStorage.getItem("theme"))
-            localStorage.setItem("theme", "white");
-
-        dark_mode = localStorage.getItem("theme") ?? "white";
-        dark_mode != "dark"
-            ? document.documentElement.classList.add("dark")
-            : document.documentElement.classList.remove("dark");
-        return dark_mode;
+        theme == "black" ? document.documentElement.classList.add("dark") : document.documentElement.classList.remove("dark")
     });
 
-    function handleSwitchDarkMode(dark_mode: string) {
-        dark_mode = localStorage.getItem("theme") == "dark" ? "white" : "dark";
-        localStorage.setItem("theme", dark_mode);
-        dark_mode != "dark"
-            ? document.documentElement.classList.add("dark")
-            : document.documentElement.classList.remove("dark");
+    async function swapTheme() {
+        theme = theme == "black" ? "white" : "black" 
+        theme == "black" ? document.documentElement.classList.add("dark") : document.documentElement.classList.remove("dark")
         let images = document.getElementsByTagName("img");
-        if (dark_mode != "dark") {
+        if (theme == "black") {
             for (let i = 0; i < images.length; i++) {
-                console.log(images[i].src)
                 images[i].src = images[i].src.replace(".svg", "_dark.svg");
             }
         } else {
             for (let i = 0; i < images.length; i++) {
-                console.log(images[i].src)
                 images[i].src = images[i].src.replace("_dark", '');
             }
         }
-
-        return dark_mode;
+        await fetch(`http://localhost:3000/profile/${$page.data.user.user_id}`, {
+            method: "PATCH",
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "theme": theme
+            })
+        });
+        return theme
     }
 </script>
 
@@ -61,8 +57,8 @@
         <div class="menu">
             <ul class="menu-links">
                 <li class="nav-link">
-                    <a href="#">
-                        {#if dark_mode == "dark"}
+                    <a href="/">
+                        {#if theme != "black"}
                             <img src={home} alt="home" />
                         {:else}
                             <img src={home_dark} alt="home" />
@@ -73,7 +69,7 @@
                 <!-- ./nav-link -->
                 <li class="nav-link">
                     <a href="#">
-                        {#if dark_mode == "dark"}
+                        {#if theme != "black"}
                             <img src={message} alt="message" />
                         {:else}
                             <img src={message_dark} alt="message" />
@@ -89,7 +85,7 @@
         <div class="bottom-content">
             <li class="">
                 <a href="#">
-                    {#if dark_mode == "dark"}
+                    {#if theme != "black"}
                         <img src={user} alt="user" />
                     {:else}
                         <img src={user_dark} alt="user" />
@@ -106,7 +102,7 @@
 
                 <div class="toggle-switch">
                     <span
-                        on:click={() => handleSwitchDarkMode(dark_mode)}
+                        on:click={() => swapTheme()}
                         class="switch"
                         role="button"
                         tabindex={0}
