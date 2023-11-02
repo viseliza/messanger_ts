@@ -3,7 +3,7 @@
     export let data: PageData;
     const schedule = data.schedule.split("\n");
 	const replacement = data.replacement.split("\n\n");
-	console.log(replacement)
+	
     const days_array = [
         "понедельник",
         "вторник",
@@ -31,7 +31,7 @@
                         <td rowspan="2">{row.split(" | ")[0]}</td>
                         <td>{row.split(" | ")[1]}</td>
                     {:else if schedule[index -1].split(" ")[0] == schedule[index].split(" | ")[0]}
-                        <td>{row.split(" | ")[1]}</td>
+                        <td style="border-top: 1px dashed ;">{row.split(" | ")[1]}</td>
                     {:else}
                         <td>{row.split(" | ")[0]}</td>
                         <td>{row.split(" | ")[1]}</td>
@@ -57,14 +57,13 @@
 <style>
     table {
         width: 800px;
-        border-collapse: collapse;
         overflow: hidden;
         box-shadow: 0 0 20px var(--box-shadow);
     }
     th,
     td {
         padding: 15px;
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: var(--sidebar-color);
         color: var(--text-color);
     }
     th {
@@ -81,22 +80,10 @@
     }
 
     h1 {
-        width: 100%;
-    }
-
-    .welcome {
-        display: block;
-        position: relative;
-        width: 100%;
-        height: 0;
-        padding: 0 0 calc(100% * 495 / 2048) 0;
-    }
-
-    .welcome img {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        display: block;
+        width: 80%;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 40px;
+        text-align: left;
     }
 </style>

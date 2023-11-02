@@ -83,7 +83,7 @@ async function getReplacemnt(group: string, path: string) {
 
 	for (let line = 5; line < body.length - 1; line++) {
 		let _value = body[line].split('\t');
-		console.log(_value)
+		
 		if (_value[0] == '') continue;
 		result += `Группа ${_value[0]}\n№ пары ${_value[1]}\nПо расписанию ${_value[2]}\n`;
 		if (_value[3] != undefined && _value[3].toLowerCase() == "не будет") {
@@ -98,6 +98,5 @@ async function getReplacemnt(group: string, path: string) {
 			else result += `${_value[3]}\n\n`;
 		}
 	}
-	console.log(result)
 	return result == '' ? 'Замены для выбранной группы не найдены!' : result
 }

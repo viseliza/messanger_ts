@@ -17,7 +17,7 @@
     async function swapTheme() {
         theme = theme == "black" ? "white" : "black" 
         theme == "black" ? document.documentElement.classList.add("dark") : document.documentElement.classList.remove("dark")
-        let images = document.getElementsByTagName("img");
+        let images: HTMLCollectionOf<HTMLImageElement> = document.getElementsByClassName("nav_icon") as HTMLCollectionOf<HTMLImageElement>;
         if (theme == "black") {
             for (let i = 0; i < images.length; i++) {
                 images[i].src = images[i].src.replace(".svg", "_dark.svg");
@@ -59,22 +59,22 @@
                 <li class="nav-link">
                     <a href="/">
                         {#if theme != "black"}
-                            <img src={home} alt="home" />
+                            <img class="nav_icon" src={home} alt="home" />
                         {:else}
-                            <img src={home_dark} alt="home" />
+                            <img class="nav_icon" src={home_dark} alt="home" />
                         {/if}
-                        <span class="tooltip-text">Home</span>
+                        <span class="tooltip-text">Главная</span>
                     </a>
                 </li>
                 <!-- ./nav-link -->
                 <li class="nav-link">
-                    <a href="#">
+                    <a href="/messanger">
                         {#if theme != "black"}
-                            <img src={message} alt="message" />
+                            <img class="nav_icon" src={message} alt="message" />
                         {:else}
-                            <img src={message_dark} alt="message" />
+                            <img class="nav_icon" src={message_dark} alt="message" />
                         {/if}
-                        <span class="tooltip-text">Messanger</span>
+                        <span class="tooltip-text">Сообщения</span>
                     </a>
                 </li>
             </ul>
@@ -86,11 +86,11 @@
             <li class="">
                 <a href="#">
                     {#if theme != "black"}
-                        <img src={user} alt="user" />
+                        <img class="nav_icon" src={user} alt="user" />
                     {:else}
-                        <img src={user_dark} alt="user" />
+                        <img class="nav_icon" src={user_dark} alt="user" />
                     {/if}
-                    <span class="tooltip-text">Log out</span>
+                    <span class="tooltip-text">Профиль</span>
                 </a>
             </li>
 
@@ -101,6 +101,7 @@
                 </div>
 
                 <div class="toggle-switch">
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <span
                         on:click={() => swapTheme()}
                         class="switch"
@@ -241,11 +242,12 @@
         z-index: 1;
         width: 100px;
         color: white;
+        font-weight: 500;
         font-size: 12px;
         margin-left: 70px;
         background-color: var(--tooltip);
         border-radius: 10px;
-        padding: 10px 15px 10px 15px;
+        padding: 10px 20px 10px 15px;
     }
 
     li a:hover .tooltip-text {
