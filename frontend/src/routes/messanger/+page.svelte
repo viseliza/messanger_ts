@@ -11,8 +11,8 @@
 <section>
     <h1>Чаты</h1>
     <hr />
-    <a href=""><div class="chat">
-        
+    <div class="chats">
+        <a href=""><div class="chat">
             <div class="left">
                 <img src={placeholder} alt="" />
                 <div class="info">
@@ -22,9 +22,11 @@
             </div>
             <div class="right">
                 <span>22:55</span>
-                <img src={read} alt="">
+                <img src={read} alt="" />
             </div>
-    </div></a>
+        </div></a>
+    </div>
+    <!-- ./chats -->
 </section>
 
 <style>
@@ -33,8 +35,10 @@
         width: 100%;
         margin: 10px auto;
         background-color: var(--sidebar-color);
-        height: 100vh;
+        height: 100%;
+        min-height: 100vh;
         border-radius: 20px;
+        box-shadow: 0 0 20px var(--box-shadow);
     }
     h1 {
         text-align: left;
@@ -45,11 +49,14 @@
     a {
         text-decoration: none;
     }
+    .chats {
+        margin: 30px 10px;
+    }
     .chat {
         font-size: 14px;
         display: flex;
         justify-content: space-between;
-        margin: 20px 40px;
+        margin: 10px 40px;
         height: 80px;
         background-color: var(--primary-color-light);
         border-radius: 15px;
@@ -58,7 +65,8 @@
     .chat:hover {
         background-color: var(--primary-head);
     }
-    .left, .right {
+    .left,
+    .right {
         display: flex;
         text-align: left;
     }
@@ -85,5 +93,4 @@
         height: 10px;
         width: 10px;
     }
-
 </style>
