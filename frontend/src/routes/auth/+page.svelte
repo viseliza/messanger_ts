@@ -60,6 +60,7 @@
         font-family: inherit;
         font-size: 1rem;
         font-weight: 400;
+        outline: none;
         padding: 0 20px 0 20px;
         line-height: 1.5;
         margin-bottom: 30px;

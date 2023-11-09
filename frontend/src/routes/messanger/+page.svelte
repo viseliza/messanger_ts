@@ -9,10 +9,12 @@
 </svelte:head>
 
 <section>
-    <h1>Чаты</h1>
+    <div class="title_messanger">
+        <h1>Чаты</h1>
+    </div>
     <hr />
     <div class="chats">
-        <a href=""><div class="chat">
+        <a href="messanger/chat"><div class="chat">
             <div class="left">
                 <img src={placeholder} alt="" />
                 <div class="info">
@@ -31,20 +33,25 @@
 
 <style>
     section {
-        max-width: 800px;
+        max-width: 65vh;
         width: 100%;
         margin: 10px auto;
         background-color: var(--sidebar-color);
         height: 100%;
-        min-height: 100vh;
+        min-height: 95vh;
         border-radius: 20px;
         box-shadow: 0 0 20px var(--box-shadow);
     }
+    .title_messanger {
+        border-radius: 15px 15px 0 0;
+        height: 6vh;
+        background-color: var(--primary-head);
+    }
     h1 {
         text-align: left;
-        font-size: 26px;
+        font-size: 24px;
         font-weight: 700;
-        margin: 20px 40px;
+        padding: 10px 40px;
     }
     a {
         text-decoration: none;
@@ -56,7 +63,7 @@
         font-size: 14px;
         display: flex;
         justify-content: space-between;
-        margin: 10px 40px;
+        margin: 10px 20px;
         height: 80px;
         background-color: var(--primary-color-light);
         border-radius: 15px;

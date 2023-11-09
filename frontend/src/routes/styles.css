@@ -11,15 +11,15 @@
     /* ===== Colors ===== */
     --body-color: #e4e9f7;
     --sidebar-color: #fff;
-    --primary-color: #695cfe;
+    --primary-color: #c2c2c2;
     --primary-color-light: #f6f5ff;
     --toggle-color: #ddd;
-    --text-color: #707070;
+    --text-color: #1d1d1d;
     --tooltip: #192733;
 	--button-background: #242526;
 	--button-hover: #0a0a0a;
 	--box-shadow:rgba(0, 0, 0, 0.3);
-	--primary-head: #e4ddc4;
+	--primary-head: #e7e7e7;
 
     /* ====== Transition ====== */
     --tran-03: all 0.2s ease;

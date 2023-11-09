@@ -30,6 +30,7 @@
 
 <style>
     .footer {
+        margin-top: 2rem;
         background: #000;
         padding: 30px 0px;
         font-family: "Play", sans-serif;

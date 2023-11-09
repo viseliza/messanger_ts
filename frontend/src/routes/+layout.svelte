@@ -23,8 +23,9 @@
         <main>
             <slot />
         </main>
-
-        <Footer />
+        {#if !$page.url.pathname.includes("/messanger")} 
+            <Footer />
+        {/if}
     </div>
 {/if}
 
@@ -33,6 +34,7 @@
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        color: var(--text-color);
     }
 
     .auth {
@@ -47,7 +49,7 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        padding: 1rem;
+        padding: 1rem 1rem 0 1rem;
         width: 100%;
         max-width: 64rem;
         margin: 0 auto;

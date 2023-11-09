@@ -21,6 +21,7 @@
         if (theme == "black") {
             for (let i = 0; i < images.length; i++) {
                 images[i].src = images[i].src.replace(".svg", "_dark.svg");
+                images[i].src = images[i].src.replace(".png", "_dark.png");
             }
         } else {
             for (let i = 0; i < images.length; i++) {
@@ -59,9 +60,9 @@
                 <li class="nav-link">
                     <a href="/">
                         {#if theme != "black"}
-                            <img class="nav_icon" src={home} alt="home" />
+                            <img id="icon" class="nav_icon" src={home} alt="home" />
                         {:else}
-                            <img class="nav_icon" src={home_dark} alt="home" />
+                            <img id="icon" class="nav_icon" src={home_dark} alt="home" />
                         {/if}
                         <span class="tooltip-text">Главная</span>
                     </a>
@@ -70,9 +71,9 @@
                 <li class="nav-link">
                     <a href="/messanger">
                         {#if theme != "black"}
-                            <img class="nav_icon" src={message} alt="message" />
+                            <img id="icon" class="nav_icon" src={message} alt="message" />
                         {:else}
-                            <img class="nav_icon" src={message_dark} alt="message" />
+                            <img id="icon" class="nav_icon" src={message_dark} alt="message" />
                         {/if}
                         <span class="tooltip-text">Сообщения</span>
                     </a>
@@ -86,9 +87,9 @@
             <li class="">
                 <a href="#">
                     {#if theme != "black"}
-                        <img class="nav_icon" src={user} alt="user" />
+                        <img id="icon" class="nav_icon" src={user} alt="user" />
                     {:else}
-                        <img class="nav_icon" src={user_dark} alt="user" />
+                        <img id="icon" class="nav_icon" src={user_dark} alt="user" />
                     {/if}
                     <span class="tooltip-text">Профиль</span>
                 </a>
