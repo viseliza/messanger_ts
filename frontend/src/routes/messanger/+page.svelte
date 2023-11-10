@@ -12,7 +12,6 @@
     <div class="title_messanger">
         <h1>Чаты</h1>
     </div>
-    <hr />
     <div class="chats">
         <a href="messanger/chat"><div class="chat">
             <div class="left">
