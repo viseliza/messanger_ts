@@ -1,7 +1,6 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket } from '@nestjs/websockets';
-import { MessagesService } from './messages.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
+import { MessagesService } from '../services/messages.service';
+import { CreateMessageDto } from '../dto/create-message.dto';
 import { Socket, Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 
@@ -18,17 +17,17 @@ export class MessagesGateway {
   constructor(private readonly messagesService: MessagesService) {}
   
   @SubscribeMessage('createMessage')
-  create(@MessageBody() createMessageDto: CreateMessageDto, client: Socket) {
-    const message = this.messagesService.create(createMessageDto);
-
-    this.server.to(message.room).emit("message", message);
+  async create(@MessageBody() createMessageDto: CreateMessageDto) {
+    const message = await this.messagesService.create(createMessageDto);
+    
+    this.server.to(createMessageDto.room).emit("message", message);
     
     return message;
   }
 
   @SubscribeMessage('findAllMessages')
-  findAll() {
-    return this.messagesService.findAll();
+  findAll(@MessageBody() room_id: number) {
+    return this.messagesService.findAll(room_id);
   }
 
   @SubscribeMessage('join')
@@ -49,7 +48,6 @@ export class MessagesGateway {
     @MessageBody('isTyping') isTyping: boolean,
     @ConnectedSocket() client: Socket
     ) {
-    const name = await this.messagesService.getClientName(client.id);
     client.broadcast.emit('typing', {name: isTyping});
   }
 

@@ -22,8 +22,13 @@ export class GroupController {
   ) { }
 
   @Get('/group/:name')
-  get(@Param('name') name: string) {
+  async get(@Param('name') name: string) {
     return this.groupService.get({ name });
+  }
+
+  @Get('/groupName/:id')
+  async getName(@Param('id') id: string) {
+    return (await this.groupService.get({ id: Number(id) })).name;
   }
 
   @Get('/groups')

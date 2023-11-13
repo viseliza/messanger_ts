@@ -34,8 +34,24 @@ model Profile {
     user_id     Int?     @unique
     group       Group?   @relation("ProfileToGroup", fields: [group_id], references: [id])
     group_id    Int?
+    room        Room[]
 }
 
+model Room {
+    id          Int      @id @default(autoincrement())
+    name        String
+    profile     Profile[]
+    messages    Message[]
+}
+
+model Message {
+    id          Int      @id @default(autoincrement())
+    user_id     Int
+    text        String
+    time        String
+    room        Room     @relation(fields: [room_id], references: [id])
+    room_id     Int
+}
 
 enum Role {
     STUDENT

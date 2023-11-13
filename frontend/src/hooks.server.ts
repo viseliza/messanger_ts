@@ -12,6 +12,7 @@ interface Profile {
   role?: Role;
   user_id?: number;
   group_id: number;
+  group?: string;
 }
 
 enum Role {
@@ -23,7 +24,6 @@ enum Theme {
   white,
   black
 }
-
 
 const JWT_ACCESS_TOKEN = "d7a428bc721a2e90e5dce093933c5199aa7adadc11c04cdabceb282897d4a2bf";
 
@@ -44,6 +44,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       }
       
       const profile = await (await fetch(`http://localhost:3000/profile/${jwtUser.user_id}`)).json()
+      const group = await (await fetch(`http://localhost:3000/groupName/${jwtUser.group_id}`)).json()
       
       const sessionProfile: Profile = {
         id: jwtUser.id,
@@ -55,6 +56,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         role: jwtUser.role,
         user_id: jwtUser.user_id,
         group_id: jwtUser.group_id,
+        group: group
       };
      
       event.locals.user = sessionProfile;

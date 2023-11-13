@@ -10,7 +10,7 @@
 
 <section>
     <div class="title_messanger">
-        <h1>Чаты</h1>
+        <span class="title">Чаты</span>
     </div>
     <div class="chats">
         <a href="messanger/chat"><div class="chat">
@@ -44,13 +44,15 @@
     .title_messanger {
         border-radius: 15px 15px 0 0;
         height: 6vh;
+        display: flex;
+        align-items: center;
         background-color: var(--primary-head);
     }
-    h1 {
-        text-align: left;
+    .title {
         font-size: 24px;
         font-weight: 700;
-        padding: 10px 40px;
+        padding-left: 3vw;
+        text-align: left;
     }
     a {
         text-decoration: none;

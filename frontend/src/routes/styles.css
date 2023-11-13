@@ -11,7 +11,7 @@
     /* ===== Colors ===== */
     --body-color: #e4e9f7;
     --sidebar-color: #fff;
-    --primary-color: #c2c2c2;
+    --primary-color: #e7e7e7;
     --primary-color-light: #f6f5ff;
     --toggle-color: #ddd;
     --text-color: #1d1d1d;
@@ -20,6 +20,7 @@
 	--button-hover: #0a0a0a;
 	--box-shadow:rgba(0, 0, 0, 0.3);
 	--primary-head: #e7e7e7;
+	--message-back: rgb(84, 187, 255);
 
     /* ====== Transition ====== */
     --tran-03: all 0.2s ease;
@@ -55,6 +56,7 @@ html.dark {
 	--button-background: #ccc;
 	--button-hover: #8a8a8a;
 	--box-shadow:rgba(0, 0, 0, 0.3);
+	--message-back: rgb(0, 90, 150);
 	--primary-head: rgba(255, 255, 255, 0.25);
 }
 

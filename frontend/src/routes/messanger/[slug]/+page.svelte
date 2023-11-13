@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { io } from "socket.io-client";
     import { page } from "$app/stores";
     import placeholder from "$lib/images/50x50.svg";
     import attachment from "$lib/images/attachment.svg";
@@ -8,39 +9,46 @@
     import points from "$lib/images/points.svg";
     import arrow_left from "$lib/images/arrow-left.png";
     import arrow_left_dark from "$lib/images/arrow-left_dark.png";
-    import { io } from "socket.io-client";
-    import { onMount } from "svelte";
+    import type { PageData } from "./$types";
 
+    export let data: PageData;
     const socket = io("http://localhost:3000");
 
-    let messages = {};
+    let messages: Array<any>;
     let name = "";
+    const room_id = data.room.id;
+    // let name = `${$page.data.user.first_name} ${$page.data.user.last_name}`;
     let text = "";
-    let group = "1992";
+    let group = data.room.name;
 	let joined = true;
-	
 
 	socket.on('connect', () => {
 		socket.emit('joinRoom', group);
 
-        socket.emit("findAllMessages", {}, (respone: any) => {
-            messages = respone;
+        socket.emit("findAllMessages", room_id, (response: any) => {
+            messages = response;
         });
 
         socket.on("message", (message) => {
-            messages[message.room] = [...messages[message.room], message];
-		});
+            messages = [...messages, message]
+        });
     });
 
     const sendMessage = () => {
-        socket.emit("createMessage", { name: name, text: text, room: group }, () => {
+        socket.emit("createMessage", { 
+            name: name, 
+            text: text,
+            time: new Date().toLocaleTimeString().slice(0, -3), 
+            room: group,
+            room_id: room_id,
+        }, () => {
                 text = "";
             }
         );
     };
 
     const join = () => {
-        socket.emit("join", { name: name }, (response) => {
+        socket.emit("join", { name: name }, () => {
             joined = true;
 			socket.emit('joinRoom', group)
         });
@@ -50,22 +58,22 @@
 </script>
 
 
-
 <svelte:head>
     <title>Чат</title>
     <meta name="description" content="Messanger" />
 </svelte:head>
 
-
 <section>
     <div class="chat_header">
         <div class="back">
+            <a class="back" href="./" style="text-decoration: none;">
             {#if theme == 'white'}
             <img class="nav_icon" src={arrow_left} alt="">
             {:else}
             <img class="nav_icon" src={arrow_left_dark} alt="">
             {/if}
             <span>Назад</span>
+            </a>
         </div>
         <div class="title_box">
             <span class="title">Название группы</span>
@@ -81,34 +89,59 @@
         {#if !joined}
             <div>
                 <form>
-                    <label>What's your name?</label>
+                    <span>What's your name?</span>
                     <input bind:value={name} />
                     <input bind:value={group} />
                     <button type="submit" on:click={() => join()}>Send</button>
                 </form>
             </div>
         {:else}
-            {#if messages[group]}
-                {#each messages[group] as message}
+            {#if messages}
+                {#each messages as message, index}
                     {#if message.name != "0"}
-                    <span style="margin-left: 20px;">22:48</span>
+                        {#if index != 0 && messages[index - 1].time == messages[index].time}
+                        <div class="message" style="padding-top: 0; margin-left: 55px;">
+                            <div class="content">
+                                <span class="text">{message.text}</span>
+                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">{message.time}</span>
+                            </div>
+                        </div>
+                        {:else}
                         <div class="message">
-                        <div class="icon"><img class="avatar" src={placeholder} alt=""></div>
-                        <div class="content">
-                            <span class="user"><a href="#">{message.name}</a></span>
-                            <span class="text">{message.text}</span>
+                            <div class="icon"><img class="avatar" src={placeholder} alt=""></div>
+                            <div class="content">
+                                <span class="text">{message.text}</span>
+                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">{message.time}</span>
+                            </div>
                         </div>
-                    </div>
+                        {/if}
                     {:else}
-                    <div class="message" style="align-self: flex-end; background-color: rgb(0, 90, 150);;">
-                        <div class="icon"><img class="avatar" src={placeholder} alt=""></div>
-                        <div class="content">
-                            <span class="user"><a href="#">{message.name}</a></span>
-                            <span class="text">{message.text}</span>
+                    {#if index != 0 && messages[index - 1].time == messages[index].time}
+                        <div class="message" style="padding-top: 0; margin-right: 55px; align-self: flex-end;">
+                            <div class="content" style="background-color: var(--message-back);">
+                                <span class="text">{message.text}</span>
+                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">{message.time}</span>
+                            </div>
+                            <script>
+                                element = document.getElementsByClassName('chat_messages')[0];
+                                element.scrollTop = element.scrollHeight;
+                            </script>
                         </div>
-                    </div>
+                        {:else}
+                        <div class="message" style="align-self: flex-end;">
+                            <div class="content" style="background-color: var(--message-back);">
+                                <span class="text">{message.text}</span>
+                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">{message.time}</span>
+                            </div>
+                            <div class="icon"><img class="avatar" src={placeholder} alt=""></div>
+                            <script>
+                                element = document.getElementsByClassName('chat_messages')[0];
+                                element.scrollTop = element.scrollHeight;
+                            </script>
+                        </div>
+                        {/if}
                     {/if}
-                        
+                    
                     <script>
                         element = document.getElementsByClassName('chat_messages')[0];
                         if (element.scrollTop + 1000 > element.scrollHeight)
@@ -119,6 +152,8 @@
                     element = document.getElementsByClassName('chat_messages')[0];
                     element.scrollTop = element.scrollHeight;
                 </script>
+            {:else}
+                <span style="display: flex; justify-content: center; align-items: center; flex: 1 1 auto;">Кажется, здесь ничего нет...</span>
             {/if} 
         {/if}
     </div>
@@ -179,7 +214,7 @@
     input {
         margin: 10px;
         flex: 1 1 auto;
-        background-color: var(--primary-head);
+        background-color: transparent;
         border-radius: 5px;
         border: none;
         padding: 5px 15px;
@@ -192,8 +227,8 @@
         color: var(--primary-head);
     }
     .chat_footer .nav_icon {
-        width: 1.5vw;
-        height: 3vh;
+        width: 28px;
+        height: 28px;
         margin: auto 10px;
     }
     .chat_footer button {
@@ -253,25 +288,26 @@
     .message {
         display: flex;
         flex-direction: row;
-        margin: 20px;
+        margin: 0 15px;
         padding: 10px;
-        background-color: var(--primary-color);
         align-self: flex-start;
-        border-radius: 1vw;
-        min-width: 10vw;
-        word-wrap: break-word;
     }
     .content {
-        padding-left: 15px;
+        word-wrap: break-word;
+        min-width: 90px;
+        max-width: 400px;
+        margin: 0 10px;
+        padding: 10px 15px;
+        border-radius: 20px;
+        background-color: var(--primary-color);
         display: inline-flex;
         flex-direction: column;
         justify-content: space-between;
     }
     .icon img {
-        width: 2vw;
+        width: 40px;
     }
     .text {
         word-wrap: break-word;
-        max-width: 20vw;
     }
 </style>
