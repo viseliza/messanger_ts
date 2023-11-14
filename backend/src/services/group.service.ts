@@ -10,7 +10,7 @@ export class GroupService {
     return this.prisma.group.findUnique({ where });
   }
 
-  findMany(params: {
+  async findMany(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.GroupWhereUniqueInput;
@@ -18,7 +18,7 @@ export class GroupService {
     orderBy?: Prisma.GroupOrderByWithRelationInput;
   }): Promise<Group[]> {
     const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.group.findMany({ skip, take, cursor, where, orderBy });
+    return await this.prisma.group.findMany({ skip, take, cursor, where, orderBy });
   }
 
   create(data: Prisma.GroupCreateInput): Promise<Group> {

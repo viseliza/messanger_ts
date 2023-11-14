@@ -21,14 +21,15 @@ import {
     ) { }
   
     @Get('/profile/:user_id')
-    get(@Param('user_id') user_id: string) {
+    async get(@Param('user_id') user_id: string) {
       const id = Number(user_id)
+      await this.profileService.findMany({});
       return this.profileService.get({ user_id: id });
     }
   
-    @Get('/profiles')
-    findMany() {
-      return this.profileService.findMany({});
+    @Get('/profiles/:user_id')
+    findMany(@Param('user_id') user_id: number) {
+      return this.profileService.findMany({ user_id });
     }
   
     @Post('/profile/auth')

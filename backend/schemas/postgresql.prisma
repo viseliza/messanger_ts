@@ -34,13 +34,23 @@ model Profile {
     user_id     Int?     @unique
     group       Group?   @relation("ProfileToGroup", fields: [group_id], references: [id])
     group_id    Int?
-    room        Room[]
+    rooms       ProfileRooms[]
 }
+
+
+model ProfileRooms {
+    id          Int      @id @default(autoincrement())
+    profile     Profile  @relation(fields: [profile_id], references: [id])
+    room        Room     @relation(fields: [room_id], references: [id])
+    profile_id  Int
+    room_id     Int
+}
+
 
 model Room {
     id          Int      @id @default(autoincrement())
     name        String
-    profile     Profile[]
+    profiles    ProfileRooms[]
     messages    Message[]
 }
 
@@ -49,6 +59,7 @@ model Message {
     user_id     Int
     text        String
     time        String
+    is_read     Boolean?
     room        Room     @relation(fields: [room_id], references: [id])
     room_id     Int
 }

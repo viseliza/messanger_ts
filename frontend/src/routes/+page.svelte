@@ -28,12 +28,12 @@
                     {#if days_array.includes(row.toLowerCase().trim())}
                         <th colspan="2">{row}</th>
                     {:else if schedule[index].split(" ")[0] == schedule[index + 1].split(" | ")[0]}
-                        <td rowspan="2">{row.split(" | ")[0]}</td>
+                        <td class='time' rowspan="2">{row.split(" | ")[0]}</td>
                         <td>{row.split(" | ")[1]}</td>
                     {:else if schedule[index -1].split(" ")[0] == schedule[index].split(" | ")[0]}
-                        <td style="border-top: 1px dashed ;">{row.split(" | ")[1]}</td>
+                        <td>{row.split(" | ")[1]}</td>
                     {:else}
-                        <td>{row.split(" | ")[0]}</td>
+                        <td class='time'>{row.split(" | ")[0]}</td>
                         <td>{row.split(" | ")[1]}</td>
                     {/if}
                 </tr>
@@ -55,6 +55,9 @@
 </section>
 
 <style>
+    .time {
+        width: 120px;
+    }
     table {
         width: 800px;
         overflow: hidden;

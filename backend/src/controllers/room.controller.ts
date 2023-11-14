@@ -17,10 +17,16 @@ import {
 @Controller()
 export class RoomController {
     constructor ( private readonly roomService: RoomService ) { }
-
+    
     @Get('/room/:name')
     get(@Param('name') name: string) {
       return this.roomService.get({ name });
+    }
+    
+    // Все сообщения из room
+    @Get('/rooms/:name')
+    findMessages(@Param('name') name: string){
+        return this.roomService.getMessagesFromRoom({ name });
     }
   
     // @Post('/auth')
