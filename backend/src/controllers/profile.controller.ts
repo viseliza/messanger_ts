@@ -23,7 +23,6 @@ import {
     @Get('/profile/:user_id')
     async get(@Param('user_id') user_id: string) {
       const id = Number(user_id)
-      await this.profileService.findMany({});
       return this.profileService.get({ user_id: id });
     }
   

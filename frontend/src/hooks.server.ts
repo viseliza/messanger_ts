@@ -13,6 +13,7 @@ interface Profile {
   user_id?: number;
   group_id: number;
   group?: string;
+  rooms?: Array<Object>
 }
 
 enum Role {
@@ -43,7 +44,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         throw new Error("Something went wrong");
       }
       
-      const profile = await (await fetch(`http://localhost:3000/profile/${jwtUser.user_id}`)).json()
+      const profile = await (await fetch(`http://localhost:3000/profiles/${jwtUser.user_id}`)).json()
       const group = await (await fetch(`http://localhost:3000/groupName/${jwtUser.group_id}`)).json()
       
       const sessionProfile: Profile = {
@@ -56,7 +57,8 @@ export const handle: Handle = async ({ event, resolve }) => {
         role: jwtUser.role,
         user_id: jwtUser.user_id,
         group_id: jwtUser.group_id,
-        group: group
+        group: group,
+        rooms: profile.room
       };
      
       event.locals.user = sessionProfile;

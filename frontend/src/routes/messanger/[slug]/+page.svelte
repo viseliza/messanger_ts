@@ -15,7 +15,7 @@
     const socket = io("http://localhost:3000");
 
     let messages: Array<any>;
-    let name = "";
+    let user_id = "1";
     const room_id = data.room.id;
     // let name = `${$page.data.user.first_name} ${$page.data.user.last_name}`;
     let text = "";
@@ -35,20 +35,22 @@
     });
 
     const sendMessage = () => {
-        socket.emit("createMessage", { 
-            name: name, 
-            text: text,
-            time: new Date().toLocaleTimeString().slice(0, -3), 
-            room: group,
-            room_id: room_id,
-        }, () => {
-                text = "";
-            }
-        );
+        if (text) {
+            socket.emit("createMessage", { 
+                name: user_id, 
+                text: text,
+                time: new Date().toLocaleTimeString().slice(0, -3), 
+                room: group,
+                room_id: room_id,
+            }, () => {
+                    text = "";
+                }
+            );
+        }
     };
 
     const join = () => {
-        socket.emit("join", { name: name }, () => {
+        socket.emit("join", { name: user_id }, () => {
             joined = true;
 			socket.emit('joinRoom', group)
         });
@@ -76,7 +78,7 @@
             </a>
         </div>
         <div class="title_box">
-            <span class="title">Название группы</span>
+            <span class="title">{group}</span>
             <span class="count">n колличество участников</span>
         </div>
         <div class="info">
@@ -90,7 +92,7 @@
             <div>
                 <form>
                     <span>What's your name?</span>
-                    <input bind:value={name} />
+                    <input bind:value={user_id} />
                     <input bind:value={group} />
                     <button type="submit" on:click={() => join()}>Send</button>
                 </form>
@@ -98,7 +100,7 @@
         {:else}
             {#if messages}
                 {#each messages as message, index}
-                    {#if message.name != "0"}
+                    {#if message.user_id != "0"}
                         {#if index != 0 && messages[index - 1].time == messages[index].time}
                         <div class="message" style="padding-top: 0; margin-left: 55px;">
                             <div class="content">
