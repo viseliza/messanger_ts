@@ -30,6 +30,7 @@ model Profile {
     father_name String?
     theme       Theme    @default(white)
     role        Role     @default(STUDENT)
+    status      String?
     user        User?    @relation(fields: [user_id], references: [id])
     user_id     Int?     @unique
     group       Group?   @relation("ProfileToGroup", fields: [group_id], references: [id])
@@ -49,8 +50,8 @@ model Message {
     id          Int      @id @default(autoincrement())
     user_id     Int
     text        String
-    time        String
-    is_read     Boolean?
+    time        DateTime
+    is_read     Boolean? @default(false)
     room        Room     @relation(fields: [room_id], references: [id])
     room_id     Int
 }

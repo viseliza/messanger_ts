@@ -7,9 +7,9 @@
     import home_dark from "$lib/images/home_dark.svg";
     import message from "$lib/images/message.svg";
     import message_dark from "$lib/images/message_dark.svg";
-
+    
     let theme = $page.data.user.theme;
-
+   
     onMount(() => {
         theme == "black" ? document.documentElement.classList.add("dark") : document.documentElement.classList.remove("dark")
     });
@@ -28,6 +28,7 @@
                 images[i].src = images[i].src.replace("_dark", '');
             }
         }
+        // await api.patchProfile(theme);
         await fetch(`http://localhost:3000/profile/${$page.data.user.user_id}`, {
             method: "PATCH",
             headers: { 
@@ -85,7 +86,7 @@
 
         <div class="bottom-content">
             <li class="">
-                <a href="#">
+                <a href="/{$page.data.user.login}">
                     {#if theme != "black"}
                         <img id="icon" class="nav_icon" src={user} alt="user" />
                     {:else}

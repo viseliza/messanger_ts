@@ -1,6 +1,25 @@
 <script lang="ts" type="module">
     import placeholder from "$lib/images/50x50.svg";
     import read from "$lib/images/read.svg";
+    import type { PageData } from "./$types";
+    
+    export let data: PageData;
+    const rooms = data.user.rooms;
+
+    function displayTime(date: Date) {
+        let today = new Date();
+        if ( date.toLocaleDateString() == today.toLocaleDateString() ) {
+            return date.toLocaleTimeString("en-GB", { hour: "numeric", 
+                        minute: "numeric"});
+        } else if ( date.getFullYear() == today.getFullYear() &&
+                    date.getMonth() == today.getMonth() &&
+                    date.getDate() + 1 == today.getDate() 
+        ) {
+            return "вчера"
+        } else {
+            return date.toLocaleDateString();
+        }
+    }
 </script>
 
 <svelte:head>
@@ -13,19 +32,27 @@
         <span class="title">Чаты</span>
     </div>
     <div class="chats">
-        <a href="messanger/chat"><div class="chat">
-            <div class="left">
-                <img src={placeholder} alt="" />
-                <div class="info">
-                    <span>Номер группы</span>
-                    <span>Последнее введенное сообщение</span>
+        {#each rooms as room, index}
+            <a href='messanger/{room.name}'><div class="chat">
+                <div class="left">
+                    <img src={placeholder} alt="" />
+                    <div class="info">
+                        <span style="font-weight: 700;">{room.name}</span>
+                        <span>
+                            {#if data.messages[index].text.length > 55}
+                                {data.messages[index].text.slice(0, 55)}...
+                            {:else}
+                                {data.messages[index].text}
+                            {/if}
+                        </span>
+                    </div>
                 </div>
-            </div>
-            <div class="right">
-                <span>22:55</span>
-                <img src={read} alt="" />
-            </div>
-        </div></a>
+                <div class="right">
+                    <span>{displayTime(new Date(data.messages[index].time))}</span>
+                    <img src={read} alt="" />
+                </div>
+            </div></a>
+        {/each}
     </div>
     <!-- ./chats -->
 </section>

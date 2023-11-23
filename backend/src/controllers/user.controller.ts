@@ -16,9 +16,10 @@ export class UserController {
     private readonly userService: UserService,
   ) { }
 
-  @Get('/:login')
-  get(@Param('login') login: string) {
-    return this.userService.findOne({ login });
+  @Get('/user/:login')
+  async get(@Param('login') login: string) {
+    const user = this.userService.findOne({ login });
+    return user;
   }
 
   @Post('/auth')

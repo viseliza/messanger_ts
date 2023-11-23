@@ -1,10 +1,8 @@
-import type { PageLoad } from "./$types";
+// import type { PageLoad } from "./$types";
 
-export const load: PageLoad = async ({ parent }) => {
-    const data = (await parent()).user;
-    const room = await (await fetch(`http://localhost:3000/room/${data.group}`)).json();
-    return { room }
-}
+// export const load: PageLoad = async ({ data }) => {
+//     return { room: data }
+// }
 
 // export const load: PageLoad = async ({ params }) => {
 //     const room = params.slug

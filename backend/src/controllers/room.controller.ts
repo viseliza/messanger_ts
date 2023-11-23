@@ -25,9 +25,19 @@ export class RoomController {
     
     // Все сообщения из room
     @Get('/rooms/:name')
-    findMessages(@Param('name') name: string){
-        return this.roomService.getMessagesFromRoom({ name });
+    async getLastMessage(@Param('name') name: string) {
+        return await this.roomService.lastMessage({ name });
     }
+
+    @Get('/countUsersInGroup/:name')
+    async getUsersFromRoom(@Param('name') name: string) {
+        return await this.roomService.getCountUsers(name);
+    }
+
+    // @Get('/roomLastMessage/:name')
+    // async lastMessage(@Param('name') name: string) {
+    //     console.log(await this.roomService.findMany({ orderBy: {id: 'desc'}, take: 1 }))
+    // }
   
     // @Post('/auth')
     // create(

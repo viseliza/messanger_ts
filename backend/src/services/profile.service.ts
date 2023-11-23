@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import { Profile, Prisma } from '@prisma/client';
 
 @Injectable()
@@ -7,15 +8,34 @@ export class ProfileService {
   constructor(private prisma: PrismaService) { }
 
   async get(where: Prisma.ProfileWhereUniqueInput): Promise<Profile> {
-    return await this.prisma.profile.findUnique({ where });
+    return await this.prisma.profile.findUnique({ 
+      where
+    });
+  }
+
+  async getByLogin(data: string): Promise<Profile> {
+    const response = await this.prisma.profile.findFirst({ 
+      where: {
+        user: { 
+          login: data
+        }
+      } 
+    });
+    if (!response) throw new NotFoundException('Пользователь не найден!') 
+    return response;
   }
 
   async findMany( data: Prisma.ProfileWhereInput ): Promise<Profile> {
-    return await this.prisma.profile.findFirst({ where: {
-      user_id: Number(data.user_id)
-    }, include: {
-      room: true
-    } });
+    return await this.prisma.profile.findFirst({ 
+      where: {
+        user_id: Number(data.user_id)
+      }, 
+      include: {
+        room: true,
+        user: true,
+        group: true
+      } 
+    });
   }
 
   async create(data): Promise<Profile> {
@@ -29,7 +49,7 @@ export class ProfileService {
     return this.prisma.profile.create({
       data: {
         email: data.email,
-        first_name: data.father_name,
+        first_name: data.first_name,
         last_name: data.last_name,
         father_name: data.father_name,
         theme: data.theme,

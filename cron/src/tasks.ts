@@ -1,66 +1,39 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
 
-interface Param {
-    name: String;
-    href: String;
-}
-
 class Tasks {
     static async pushGroups() {
-        const url: string = 'https://portal.novsu.ru/univer/timetable/spo/';
-        const AxiosInstance = axios.create();
-        let data = [];
+        let groupsData = [];
 
-        await AxiosInstance.get(url)
-            .then(
-                response => {
-                    const html = response.data;
-                    const $ = cheerio.load(html),
-                        col = $('.block_content.content:first');
-
-                    col.find('tr').each((_, row) => {
-                        $(row).find('td').find('a').each(async (_, cell) => {
-                            let result = "[ ";
-                            let url_group = `https://portal.novsu.ru/search/groups/r.2500.p.search.g.3782/i.2500/?page=search&grpname=${$(cell).text()}`;
-                            if ($(cell).text() == "1992")
-                            {
-                                await AxiosInstance.get(url_group)
-                                .then (
-                                    response => {
-                                        const html = response.data;
-                                        const $ = cheerio.load(html), 
-                                            col = $('.block_content.content:first');
-                                        col.find('tr').each((_, row) => {
-                                            $(row).find('td').find('a').each(async (_n, cell) => {
-                                                result += `, s${$(cell).attr('href').slice(8)}`;
-                                            })
-                                        })
-                                    }
-                                )
-                            }
-                            result += " ]";
-                            console.log(result.replace("[ , ", "[ "))
-                            data.push({ "name": $(cell).text(), "href": $(cell).attr('href')});
-                        })
-                    })
-                }
-            )
-            .catch(console.error)
-            
         try {
-            const response = await fetch("http://localhost:3000/groups", {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json",
-                },
+            const response = await axios.get('https://portal.novsu.ru/univer/timetable/spo/');
+            const $ = cheerio.load(response.data);
+
+            $('.block_content.content:first').find('tr').each((_, row) => {
+                $(row).find('td').find('a').each(async (_, cell) => {
+                    groupsData = [...groupsData, { 'name': $(cell).text(), 'href': $(cell).attr('href')}];
+
+                })
             })
-            console.log(await response.json());
         } catch (error) {
-            console.error("Ошибка:", error);
+            console.error('Ошибка:', error);
+        }
+
+        console.log(groupsData);
+
+        try {
+            const response = await axios.request({
+                method: 'POST',
+                url: 'http://localhost:3000/groups',
+                data: groupsData,
+                validateStatus: (status) => { return true; }
+            })
+
+            console.log(await response.data);
+        } catch (error) {
+            console.error('Ошибка:', error);
         }
     }
 }
 
-Tasks.pushGroups()
+// Tasks.pushGroups()

@@ -87,10 +87,6 @@
         border-radius: 20px;
         transition: all 0.4s;
     }
-    .input::placeholder {
-        color: #212529;
-        opacity: 0.4;
-    }
     button:hover {
         cursor: pointer;
         background-color: var(--button-hover);

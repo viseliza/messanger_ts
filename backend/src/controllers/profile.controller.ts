@@ -25,6 +25,11 @@ import {
       const id = Number(user_id)
       return this.profileService.get({ user_id: id });
     }
+
+    @Get('/profileByLogin/:login')
+    async getByLogin(@Param('login') login: string) {
+      return await this.profileService.getByLogin( login );
+    }
   
     @Get('/profiles/:user_id')
     findMany(@Param('user_id') user_id: number) {

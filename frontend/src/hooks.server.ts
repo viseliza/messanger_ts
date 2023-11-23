@@ -1,6 +1,7 @@
 import type { Handle } from '@sveltejs/kit';
 import { parse } from 'cookie';
 import * as jwt from 'jsonwebtoken';
+import { AppAPI } from './api/api';
 
 interface Profile {
   id?: number;
@@ -12,6 +13,7 @@ interface Profile {
   role?: Role;
   user_id?: number;
   group_id: number;
+  login?: string;
   group?: string;
   rooms?: Array<Object>
 }
@@ -44,8 +46,9 @@ export const handle: Handle = async ({ event, resolve }) => {
         throw new Error("Something went wrong");
       }
       
-      const profile = await (await fetch(`http://localhost:3000/profiles/${jwtUser.user_id}`)).json()
-      const group = await (await fetch(`http://localhost:3000/groupName/${jwtUser.group_id}`)).json()
+      const api = new AppAPI('');
+
+      const profile = await api.getProfile(jwtUser.user_id);
       
       const sessionProfile: Profile = {
         id: jwtUser.id,
@@ -57,15 +60,14 @@ export const handle: Handle = async ({ event, resolve }) => {
         role: jwtUser.role,
         user_id: jwtUser.user_id,
         group_id: jwtUser.group_id,
-        group: group,
+        login: profile.user.login,
         rooms: profile.room
       };
-     
+      
       event.locals.user = sessionProfile;
     } catch (error) {
       console.error(error);
     }
   }
-
   return await resolve(event);
 };

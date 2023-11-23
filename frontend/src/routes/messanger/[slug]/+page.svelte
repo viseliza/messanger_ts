@@ -1,29 +1,29 @@
 <script lang="ts">
     import { io } from "socket.io-client";
-    import { page } from "$app/stores";
     import placeholder from "$lib/images/50x50.svg";
     import attachment from "$lib/images/attachment.svg";
     import attachment_dark from "$lib/images/attachment_dark.svg";
     import play from "$lib/images/navigation.svg";
     import play_dark from "$lib/images/navigation_dark.svg";
     import points from "$lib/images/points.svg";
+    import points_dark from "$lib/images/points_dark.svg";
     import arrow_left from "$lib/images/arrow-left.png";
     import arrow_left_dark from "$lib/images/arrow-left_dark.png";
     import type { PageData } from "./$types";
-
     export let data: PageData;
+   
     const socket = io("http://localhost:3000");
-
-    let messages: Array<any>;
-    let user_id = "1";
+    const count = data.count[0]._count.profiles;
+    let messages: Array<any> = [];
+    let user_id = data.user.user_id;
     const room_id = data.room.id;
     // let name = `${$page.data.user.first_name} ${$page.data.user.last_name}`;
     let text = "";
-    let group = data.room.name;
+    let room = data.room.name;
 	let joined = true;
-
+    
 	socket.on('connect', () => {
-		socket.emit('joinRoom', group);
+		socket.emit('joinRoom', room);
 
         socket.emit("findAllMessages", room_id, (response: any) => {
             messages = response;
@@ -35,12 +35,12 @@
     });
 
     const sendMessage = () => {
-        if (text) {
+        if (text.trim()) {
             socket.emit("createMessage", { 
                 name: user_id, 
-                text: text,
-                time: new Date().toLocaleTimeString().slice(0, -3), 
-                room: group,
+                text: text.trim(),
+                time: new Date(), 
+                room,
                 room_id: room_id,
             }, () => {
                     text = "";
@@ -52,11 +52,16 @@
     const join = () => {
         socket.emit("join", { name: user_id }, () => {
             joined = true;
-			socket.emit('joinRoom', group)
+			socket.emit('joinRoom', room)
         });
     };
     
-    let theme = $page.data.user.theme;
+    function on_key_down(event: { key: string; }) {
+        if (event.key == "Enter") 
+            sendMessage();
+    }
+
+    let theme = data.user.theme;
 </script>
 
 
@@ -70,19 +75,23 @@
         <div class="back">
             <a class="back" href="./" style="text-decoration: none;">
             {#if theme == 'white'}
-            <img class="nav_icon" src={arrow_left} alt="">
+                <img class="nav_icon" src={arrow_left} alt="">
             {:else}
-            <img class="nav_icon" src={arrow_left_dark} alt="">
+                <img class="nav_icon" src={arrow_left_dark} alt="">
             {/if}
             <span>Назад</span>
             </a>
         </div>
         <div class="title_box">
-            <span class="title">{group}</span>
-            <span class="count">n колличество участников</span>
+            <span class="title">{room}</span>
+            <span class="count">колличество участников: {count}</span>
         </div>
         <div class="info">
-            <img src={points} alt="">
+            {#if theme == 'white'}
+                <img class="nav_icon" src={points} alt="">
+            {:else}
+                <img class="nav_icon" src={points_dark} alt="">
+            {/if}
             <img id="icon" class="avatar" src={placeholder} alt="">
         </div>
     </div>
@@ -93,36 +102,51 @@
                 <form>
                     <span>What's your name?</span>
                     <input bind:value={user_id} />
-                    <input bind:value={group} />
+                    <input bind:value={room} />
                     <button type="submit" on:click={() => join()}>Send</button>
                 </form>
             </div>
         {:else}
-            {#if messages}
+            {#if messages.length != 0}
                 {#each messages as message, index}
-                    {#if message.user_id != "0"}
-                        {#if index != 0 && messages[index - 1].time == messages[index].time}
+                    {#if message.user_id != data.user.user_id}
+                        {#if index != 0 && messages[index - 1].user_id != data.user.user_id && Date.parse(new Date(messages[index].time).toString()) < new Date(messages[index - 1].time).setMinutes(new Date(messages[index - 1].time).getMinutes() + 5)}
                         <div class="message" style="padding-top: 0; margin-left: 55px;">
                             <div class="content">
-                                <span class="text">{message.text}</span>
-                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">{message.time}</span>
+                                {#each message.text.split('\n') as string}
+                                    <span class="text">{string}</span>
+                                {/each}
+                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">
+                                    {new Date(messages[index].time).toLocaleTimeString("en-GB", { hour: "numeric", 
+                        minute: "numeric"})}
+                                </span>
                             </div>
                         </div>
                         {:else}
                         <div class="message">
                             <div class="icon"><img class="avatar" src={placeholder} alt=""></div>
                             <div class="content">
-                                <span class="text">{message.text}</span>
-                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">{message.time}</span>
+                                {#each message.text.split('\n') as string}
+                                    <span class="text">{string}</span>
+                                {/each}
+                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">
+                                    {new Date(messages[index].time).toLocaleTimeString("en-GB", { hour: "numeric", 
+                        minute: "numeric"})}
+                                </span>
                             </div>
                         </div>
                         {/if}
                     {:else}
-                    {#if index != 0 && messages[index - 1].time == messages[index].time}
+                    {#if index != 0 && Date.parse(new Date(messages[index].time).toString()) < new Date(messages[index - 1].time).setMinutes(new Date(messages[index - 1].time).getMinutes() + 5)}
                         <div class="message" style="padding-top: 0; margin-right: 55px; align-self: flex-end;">
                             <div class="content" style="background-color: var(--message-back);">
-                                <span class="text">{message.text}</span>
-                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">{message.time}</span>
+                                {#each message.text.split('\n') as string}
+                                    <span class="text">{string}</span>
+                                {/each}
+                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">
+                                    {new Date(messages[index].time).toLocaleTimeString("en-GB", { hour: "numeric", 
+                        minute: "numeric"})}
+                                </span>
                             </div>
                             <script>
                                 element = document.getElementsByClassName('chat_messages')[0];
@@ -130,10 +154,16 @@
                             </script>
                         </div>
                         {:else}
-                        <div class="message" style="align-self: flex-end;">
+                        <div class="message" style="align-self: flex-end;"> 
                             <div class="content" style="background-color: var(--message-back);">
-                                <span class="text">{message.text}</span>
-                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">{message.time}</span>
+                                {#each message.text.split('\n') as string}
+                                    <span class="text">{string}</span>
+                                {/each}
+                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">
+                                    
+                                    {new Date(messages[index].time).toLocaleTimeString("en-GB", { hour: "numeric", 
+                        minute: "numeric"})}
+                                </span>
                             </div>
                             <div class="icon"><img class="avatar" src={placeholder} alt=""></div>
                             <script>
@@ -163,23 +193,28 @@
     <div class="chat_footer">
         <button>
             {#if theme == 'white'}
-            <img id="icon" class="nav_icon" src={attachment} alt="">
+                <img id="icon" class="nav_icon" src={attachment} alt="">
             {:else}
-            <img id="icon" class="nav_icon" src={attachment_dark} alt="">
+                <img id="icon" class="nav_icon" src={attachment_dark} alt="">
             {/if}
         </button>
-        <input placeholder="Введите сообщение..." bind:value={text} type="text"/>
-        <button type="submit" on:click={() => sendMessage()}>
+        <textarea on:keypress={(
+            (event) => { 
+                if (event.keyCode == 13 && !event.shiftKey) { 
+                    event.preventDefault();
+                    sendMessage() 
+                } 
+            })} placeholder="Введите сообщение..." bind:value={text}></textarea>
+        <button type="submit" on:click={() => sendMessage()} on:keydown={on_key_down}>
             {#if theme == 'white'}
-            <img id="icon" class="nav_icon" src={play} alt="">
+                <img id="icon" class="nav_icon" src={play} alt="">
             {:else}
-            <img id="icon" class="nav_icon" src={play_dark} alt="">
+                <img id="icon" class="nav_icon" src={play_dark} alt="">
             {/if}
         </button>
     </div>
     <!-- ./chat_footer -->
 </section>
-
 
 <style>
     section {
@@ -213,19 +248,20 @@
         flex-direction: row;
         padding: 0 10px;
     }
-    input {
+    textarea {
         margin: 10px;
         flex: 1 1 auto;
         background-color: transparent;
         border-radius: 5px;
         border: none;
-        padding: 5px 15px;
+        padding: 12px 15px;
         font-size: 14px;
         color: var(--text-color);
         font-weight: 500;
         outline: none;
+        resize: none;
     }
-    input::placeholder {
+    textarea::placeholder {
         color: var(--primary-head);
     }
     .chat_footer .nav_icon {
@@ -312,4 +348,5 @@
     .text {
         word-wrap: break-word;
     }
+    
 </style>
