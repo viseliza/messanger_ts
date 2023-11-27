@@ -59,16 +59,16 @@
         <p>Расписание на сегодня</p>
         <table>
             <tr>
-                <td>№ пары </td>
-                <td>Время</td>
-                <td>Дисциплина</td>
+                <td style="border-bottom: 1px solid #fff">№ пары </td>
+                <td style="border-bottom: 1px solid #fff">Время</td>
+                <td style="border-bottom: 1px solid #fff">Дисциплина</td>
             </tr>
         {#each schedule as row}
             {#if row}
                 <tr>
-                    <td style="width: 80px; text-align: center;">{numbers[row.split(" | ")[0]]}</td>
-                    <td class='time'>{row.split(" | ")[0]}</td>
-                    <td>{row.split(" | ")[1]}</td>
+                    <td style="width: 95px; text-align: center; border-bottom: 1px solid #fff">{numbers[row.split(" | ")[0]]}</td>
+                    <td class='time' style="border-bottom: 1px solid #fff">{row.split(" | ")[0]}</td>
+                    <td style="border-bottom: 1px solid #fff">{row.split(" | ")[1]}</td>
                 </tr>
             {/if}
         {/each}
@@ -213,7 +213,7 @@
         margin-top: 20px;
     }
     td {
-        padding: 15px 15px 15px 0;
+        padding: 5px 15px;
         background-color: var(--sidebar-color);
         color: var(--text-color);
     }

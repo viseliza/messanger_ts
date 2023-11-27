@@ -18,8 +18,7 @@ export class UserController {
 
   @Get('/user/:login')
   async get(@Param('login') login: string) {
-    const user = this.userService.findOne({ login });
-    return user;
+    return await this.userService.findOne({ login });;
   }
 
   @Post('/auth')

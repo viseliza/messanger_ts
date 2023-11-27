@@ -70,13 +70,14 @@ export async function getOnlyNow( data: any[][], days_array: string[], column: n
 			let today = true;
 
 			while(today) {
-				row++;
-				
-				if ( data[ row + 1 ][ column - 2 ] != undefined && data[ row + 1 ][ column - 2 ].toLowerCase().trim() == days_array[ day + 1 ] ) 
-				today = false;
 
 				let time = data[ row ][ column - 1 ];
 				let replacement = data[ row ][ column ];
+				
+				row++;
+				if ( data[ row + 1 ][ column - 2 ] != undefined && data[ row + 1 ][ column - 2 ].toLowerCase().trim() == days_array[ day + 1 ] ) 
+					today = false;
+				
 
                 if (replacement == undefined && time == undefined) continue;
                 if (replacement == undefined) continue;
@@ -88,7 +89,7 @@ export async function getOnlyNow( data: any[][], days_array: string[], column: n
                 if (replacement.includes("_")) continue;
         
                 time == "8.30-10.10" ? result += `08.30-10.10 | ${replacement}\n` : result += `${time} | ${replacement}\n`
-			
+				
 			}
 			break;
 		}

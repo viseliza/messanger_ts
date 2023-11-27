@@ -12,6 +12,25 @@ export class ProfileService {
       where
     });
   }
+  
+  async findMessages(where: Prisma.ProfileWhereUniqueInput): Promise<Profile> {
+    const response = await this.prisma.profile.findFirst({ 
+      where,
+      include: {
+        room: {
+          select: {
+            messages: {
+              orderBy: {
+                id: "desc"
+              },
+              take: 1
+            }
+          }
+        }
+      }
+    });
+    return response;
+  }
 
   async getByLogin(data: string): Promise<Profile> {
     const response = await this.prisma.profile.findFirst({ 
@@ -25,7 +44,7 @@ export class ProfileService {
     return response;
   }
 
-  async findMany( data: Prisma.ProfileWhereInput ): Promise<Profile> {
+  async findProfile( data: Prisma.ProfileWhereInput ): Promise<Profile> {
     return await this.prisma.profile.findFirst({ 
       where: {
         user_id: Number(data.user_id)

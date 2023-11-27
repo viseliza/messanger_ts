@@ -26,12 +26,14 @@ export class RoomController {
     // Все сообщения из room
     @Get('/rooms/:name')
     async getLastMessage(@Param('name') name: string) {
-        return await this.roomService.lastMessage({ name });
+        const message = await this.roomService.lastMessage({ name });
+        console.log(message.messages)
+        return message.messages;
     }
 
-    @Get('/countUsersInGroup/:name')
+    @Get('/getRoomInfo/:name')
     async getUsersFromRoom(@Param('name') name: string) {
-        return await this.roomService.getCountUsers(name);
+        return await this.roomService.getRoomInfo(name);
     }
 
     // @Get('/roomLastMessage/:name')

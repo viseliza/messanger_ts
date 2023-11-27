@@ -3,9 +3,10 @@ import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params }) => {
     const api = new AppAPI('');
-    const count = await api.getCountUsers(params.slug);
+    const room = params.slug;
+    const profiles = await api.getRoomInfo(room);
     return {
-        count, 
-        room: await api.getRoom(params.slug)
+        profiles, 
+        room: await api.getRoom(room)
     };
 }

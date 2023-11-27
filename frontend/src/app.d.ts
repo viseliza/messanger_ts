@@ -3,7 +3,7 @@
 declare global {
 	namespace App {
 		interface Locals {
-			sessionUser: SessionUser
+			user: SessionUser
 		}
 		// interface Error {}
 		// interface Locals {}

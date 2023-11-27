@@ -45,7 +45,7 @@ export class AppAPI {
             });
         } else {
             url = `${AppAPI.API.origin}/${method}/${params.name}`;
-            response =  await fetch(url)
+            response = await fetch(url)
         }
         
         const json = await response.json();
@@ -92,11 +92,19 @@ export class AppAPI {
         return await this.callApi('groupName', { name: id });
     }
 
+    /** Получение последнего сообщения из чата
+     * @param {string} user_id
+     * @returns {Promise<Message[]>}
+     */
+    async getLastMessage(user_id: string) {
+        return await this.callApi('profile', { name: user_id });
+    }
+
     /** Получить профиль по user_id
      * @param {number} user_id
      * @returns {Promise<Profile>}
      */
-    async getProfile(user_id: number) {
+    async getProfile(user_id: number): Promise<Profile> {
         return await this.callApi('profiles', { name: user_id });
     }
 
@@ -116,20 +124,12 @@ export class AppAPI {
         return this.callApi('room', { name })
     }
 
-    /** Получение последнего сообщения из чата
-     * @param {string} name
-     * @returns {Promise<Message[]>}
-     */
-    async getLastMessage(name: string) {
-        return await this.callApi('rooms', { name });
-    }
-
     /** Получение колличества пользователей в комнате
      * @param {string} name
      * @returns {number}
      */
-    async getCountUsers(name: string) {
-        return await this.callApi('countUsersInGroup', { name })
+    async getRoomInfo(name: string) {
+        return await this.callApi('getRoomInfo', { name })
     }
 
 

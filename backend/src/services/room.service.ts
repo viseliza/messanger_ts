@@ -26,9 +26,21 @@ export class RoomService {
 		});
 	}
 
-	async getCountUsers(data) {
+	async getRoomInfo(data) {
 		return await this.prisma.room.findMany({
 			include: {
+				profiles: { 
+					select: {
+						first_name: true,
+						last_name: true,
+						father_name: true,
+						user: {
+							select: {
+								login: true
+							}
+						}
+					}
+				},
 				_count: {
 					select: {
 						profiles: true

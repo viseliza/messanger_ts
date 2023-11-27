@@ -11,38 +11,43 @@
     import arrow_left_dark from "$lib/images/arrow-left_dark.png";
     import type { PageData } from "./$types";
     export let data: PageData;
-   
+    
     const socket = io("http://localhost:3000");
-    const count = data.count[0]._count.profiles;
+    $: count = data.profiles[0]._count.profiles;
     let messages: Array<any> = [];
     let user_id = data.user.user_id;
-    const room_id = data.room.id;
+    let profiles = data.profiles[0].profiles;
+    let room_id = data.room.id;
+    
     // let name = `${$page.data.user.first_name} ${$page.data.user.last_name}`;
     let text = "";
-    let room = data.room.name;
-	let joined = true;
-    
-	socket.on('connect', () => {
-		socket.emit('joinRoom', room);
+    $: room = data.room.name;
+    let joined = true;
+
+    socket.on("connect", () => {
+        socket.emit("joinRoom", room);
 
         socket.emit("findAllMessages", room_id, (response: any) => {
             messages = response;
         });
 
         socket.on("message", (message) => {
-            messages = [...messages, message]
+            messages = [...messages, message];
         });
     });
 
     const sendMessage = () => {
         if (text.trim()) {
-            socket.emit("createMessage", { 
-                name: user_id, 
-                text: text.trim(),
-                time: new Date(), 
-                room,
-                room_id: room_id,
-            }, () => {
+            socket.emit(
+                "createMessage",
+                {
+                    name: user_id,
+                    text: text.trim(),
+                    time: new Date(),
+                    room,
+                    room_id: room_id,
+                },
+                () => {
                     text = "";
                 }
             );
@@ -52,18 +57,16 @@
     const join = () => {
         socket.emit("join", { name: user_id }, () => {
             joined = true;
-			socket.emit('joinRoom', room)
+            socket.emit("joinRoom", room);
         });
     };
-    
-    function on_key_down(event: { key: string; }) {
-        if (event.key == "Enter") 
-            sendMessage();
+
+    function on_key_down(event: { key: string }) {
+        if (event.key == "Enter") sendMessage();
     }
 
     let theme = data.user.theme;
 </script>
-
 
 <svelte:head>
     <title>Чат</title>
@@ -74,12 +77,12 @@
     <div class="chat_header">
         <div class="back">
             <a class="back" href="./" style="text-decoration: none;">
-            {#if theme == 'white'}
-                <img class="nav_icon" src={arrow_left} alt="">
-            {:else}
-                <img class="nav_icon" src={arrow_left_dark} alt="">
-            {/if}
-            <span>Назад</span>
+                {#if theme == "white"}
+                    <img class="nav_icon" src={arrow_left} alt="" />
+                {:else}
+                    <img class="nav_icon" src={arrow_left_dark} alt="" />
+                {/if}
+                <span>Назад</span>
             </a>
         </div>
         <div class="title_box">
@@ -87,12 +90,15 @@
             <span class="count">колличество участников: {count}</span>
         </div>
         <div class="info">
-            {#if theme == 'white'}
-                <img class="nav_icon" src={points} alt="">
+            {#if theme == "white"}
+                <img class="nav_icon" src={points} alt="" />
             {:else}
-                <img class="nav_icon" src={points_dark} alt="">
+                <img class="nav_icon" src={points_dark} alt="" />
             {/if}
-            <img id="icon" class="avatar" src={placeholder} alt="">
+            <button class="model_button" onclick="window.dialog.showModal();">
+                <img style="width: 100%; height: 100%" id="icon" class="avatar" src={placeholder} alt="">
+            </button>
+
         </div>
     </div>
     <!-- ./chat_header -->
@@ -106,117 +112,193 @@
                     <button type="submit" on:click={() => join()}>Send</button>
                 </form>
             </div>
-        {:else}
-            {#if messages.length != 0}
-                {#each messages as message, index}
-                    {#if message.user_id != data.user.user_id}
-                        {#if index != 0 && messages[index - 1].user_id != data.user.user_id && Date.parse(new Date(messages[index].time).toString()) < new Date(messages[index - 1].time).setMinutes(new Date(messages[index - 1].time).getMinutes() + 5)}
-                        <div class="message" style="padding-top: 0; margin-left: 55px;">
+        {:else if messages.length != 0}
+            {#each messages as message, index}
+                {#if message.user_id != data.user.user_id}
+                    {#if index != 0 && messages[index - 1].user_id != data.user.user_id && Date.parse(new Date(messages[index].time).toString()) < new Date(messages[index - 1].time).setMinutes(new Date(messages[index - 1].time).getMinutes() + 5)}
+                        <div
+                            class="message"
+                            style="padding-top: 0; margin-left: 55px;"
+                        >
                             <div class="content">
-                                {#each message.text.split('\n') as string}
+                                {#each message.text.split("\n") as string}
                                     <span class="text">{string}</span>
                                 {/each}
-                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">
-                                    {new Date(messages[index].time).toLocaleTimeString("en-GB", { hour: "numeric", 
-                        minute: "numeric"})}
+                                <span
+                                    style="font-size: 12px; align-self: flex-end; margin-top: 2px;"
+                                >
+                                    {new Date(
+                                        messages[index].time
+                                    ).toLocaleTimeString("en-GB", {
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                    })}
                                 </span>
                             </div>
                         </div>
-                        {:else}
-                        <div class="message">
-                            <div class="icon"><img class="avatar" src={placeholder} alt=""></div>
-                            <div class="content">
-                                {#each message.text.split('\n') as string}
-                                    <span class="text">{string}</span>
-                                {/each}
-                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">
-                                    {new Date(messages[index].time).toLocaleTimeString("en-GB", { hour: "numeric", 
-                        minute: "numeric"})}
-                                </span>
-                            </div>
-                        </div>
-                        {/if}
                     {:else}
-                    {#if index != 0 && Date.parse(new Date(messages[index].time).toString()) < new Date(messages[index - 1].time).setMinutes(new Date(messages[index - 1].time).getMinutes() + 5)}
-                        <div class="message" style="padding-top: 0; margin-right: 55px; align-self: flex-end;">
-                            <div class="content" style="background-color: var(--message-back);">
-                                {#each message.text.split('\n') as string}
+                        <div class="message">
+                            <div class="icon">
+                                <img class="avatar" src={placeholder} alt="" />
+                            </div>
+                            <div class="content">
+                                {#each message.text.split("\n") as string}
                                     <span class="text">{string}</span>
                                 {/each}
-                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">
-                                    {new Date(messages[index].time).toLocaleTimeString("en-GB", { hour: "numeric", 
-                        minute: "numeric"})}
+                                <span
+                                    style="font-size: 12px; align-self: flex-end; margin-top: 2px;"
+                                >
+                                    {new Date(
+                                        messages[index].time
+                                    ).toLocaleTimeString("en-GB", {
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                    })}
                                 </span>
                             </div>
-                            <script>
-                                element = document.getElementsByClassName('chat_messages')[0];
-                                element.scrollTop = element.scrollHeight;
-                            </script>
                         </div>
-                        {:else}
-                        <div class="message" style="align-self: flex-end;"> 
-                            <div class="content" style="background-color: var(--message-back);">
-                                {#each message.text.split('\n') as string}
-                                    <span class="text">{string}</span>
-                                {/each}
-                                <span style="font-size: 12px; align-self: flex-end; margin-top: 2px;">
-                                    
-                                    {new Date(messages[index].time).toLocaleTimeString("en-GB", { hour: "numeric", 
-                        minute: "numeric"})}
-                                </span>
-                            </div>
-                            <div class="icon"><img class="avatar" src={placeholder} alt=""></div>
-                            <script>
-                                element = document.getElementsByClassName('chat_messages')[0];
-                                element.scrollTop = element.scrollHeight;
-                            </script>
-                        </div>
-                        {/if}
                     {/if}
-                    
-                    <script>
-                        element = document.getElementsByClassName('chat_messages')[0];
-                        if (element.scrollTop + 1000 > element.scrollHeight)
+                {:else if index != 0 && Date.parse(new Date(messages[index].time).toString()) < new Date(messages[index - 1].time).setMinutes(new Date(messages[index - 1].time).getMinutes() + 5)}
+                    <div
+                        class="message"
+                        style="padding-top: 0; margin-right: 55px; align-self: flex-end;"
+                    >
+                        <div
+                            class="content"
+                            style="background-color: var(--message-back);"
+                        >
+                            {#each message.text.split("\n") as string}
+                                <span class="text">{string}</span>
+                            {/each}
+                            <span
+                                style="font-size: 12px; align-self: flex-end; margin-top: 2px;"
+                            >
+                                {new Date(
+                                    messages[index].time
+                                ).toLocaleTimeString("en-GB", {
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                })}
+                            </span>
+                        </div>
+                        <script>
+                            element =
+                                document.getElementsByClassName(
+                                    "chat_messages"
+                                )[0];
                             element.scrollTop = element.scrollHeight;
-                    </script>
-                {/each}
+                        </script>
+                    </div>
+                {:else}
+                    <div class="message" style="align-self: flex-end;">
+                        <div
+                            class="content"
+                            style="background-color: var(--message-back);"
+                        >
+                            {#each message.text.split("\n") as string}
+                                <span class="text">{string}</span>
+                            {/each}
+                            <span
+                                style="font-size: 12px; align-self: flex-end; margin-top: 2px;"
+                            >
+                                {new Date(
+                                    messages[index].time
+                                ).toLocaleTimeString("en-GB", {
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                })}
+                            </span>
+                        </div>
+                        <div class="icon">
+                            <img class="avatar" src={placeholder} alt="" />
+                        </div>
+                        <script>
+                            element =
+                                document.getElementsByClassName(
+                                    "chat_messages"
+                                )[0];
+                            element.scrollTop = element.scrollHeight;
+                        </script>
+                    </div>
+                {/if}
+
                 <script>
-                    element = document.getElementsByClassName('chat_messages')[0];
-                    element.scrollTop = element.scrollHeight;
+                    element =
+                        document.getElementsByClassName("chat_messages")[0];
+                    if (element.scrollTop + 1000 > element.scrollHeight)
+                        element.scrollTop = element.scrollHeight;
                 </script>
-            {:else}
-                <span style="display: flex; justify-content: center; align-items: center; flex: 1 1 auto;">Кажется, здесь ничего нет...</span>
-            {/if} 
+            {/each}
+            <script>
+                element = document.getElementsByClassName("chat_messages")[0];
+                element.scrollTop = element.scrollHeight;
+            </script>
+        {:else}
+            <span
+                style="display: flex; justify-content: center; align-items: center; flex: 1 1 auto;"
+                >Кажется, здесь ничего нет...</span
+            >
         {/if}
     </div>
     <!-- ./chat_messages -->
     <div class="chat_footer">
         <button>
-            {#if theme == 'white'}
-                <img id="icon" class="nav_icon" src={attachment} alt="">
+            {#if theme == "white"}
+                <img id="icon" class="nav_icon" src={attachment} alt="" />
             {:else}
-                <img id="icon" class="nav_icon" src={attachment_dark} alt="">
+                <img id="icon" class="nav_icon" src={attachment_dark} alt="" />
             {/if}
         </button>
-        <textarea on:keypress={(
-            (event) => { 
-                if (event.keyCode == 13 && !event.shiftKey) { 
+        <textarea
+            on:keypress={(event) => {
+                if (event.keyCode == 13 && !event.shiftKey) {
                     event.preventDefault();
-                    sendMessage() 
-                } 
-            })} placeholder="Введите сообщение..." bind:value={text}></textarea>
-        <button type="submit" on:click={() => sendMessage()} on:keydown={on_key_down}>
-            {#if theme == 'white'}
-                <img id="icon" class="nav_icon" src={play} alt="">
+                    sendMessage();
+                }
+            }}
+            placeholder="Введите сообщение..."
+            bind:value={text}
+        />
+        <button
+            type="submit"
+            on:click={() => sendMessage()}
+            on:keydown={on_key_down}
+        >
+            {#if theme == "white"}
+                <img id="icon" class="nav_icon" src={play} alt="" />
             {:else}
-                <img id="icon" class="nav_icon" src={play_dark} alt="">
+                <img id="icon" class="nav_icon" src={play_dark} alt="" />
             {/if}
         </button>
     </div>
     <!-- ./chat_footer -->
+    <dialog id="dialog">
+        <div class="dailog_content">
+            <div class="header">
+                <img class="avatar" src={placeholder} alt="">
+                <div class="header_content">
+                    <p>{room}</p>
+                    <p style="font-weight: 400; font-size: 14px">участников {count}</p>
+                </div>
+            </div>
+            <p>{count} members</p>
+            <div class="room_content">
+                {#each profiles as profile}
+                <div class="profile">
+                    <a href="/{profile.user.login}"><img class="avatar" src={placeholder} alt=""></a>
+                    <div class="profile_info">
+                        <a href="/{profile.user.login}"><p style="font-size: 14px;">{profile.first_name} {profile.last_name}</p></a>
+                        <p style="font-weight: 400; font-size: 14px">Был в сети</p>
+                    </div>
+                </div>
+                {/each}
+            </div>
+        </div>
+        <button onclick="window.dialog.close();" aria-label="close" class="x">❌</button>
+    </dialog>
 </section>
 
-<style>
+<style lang="scss">
     section {
         display: flex;
         flex-direction: column;
@@ -296,7 +378,8 @@
         font-size: 14px;
         color: var(--primary-color);
     }
-    .back, .info {
+    .back,
+    .info {
         width: 100px;
     }
     .back {
@@ -311,6 +394,7 @@
         flex-direction: row;
         justify-content: space-around;
         margin: 10px 15px 10px 0;
+        align-items: center;
     }
     .avatar {
         border-radius: 50%;
@@ -348,5 +432,77 @@
     .text {
         word-wrap: break-word;
     }
-    
+    .model_button {
+        background-color: transparent; 
+        border: none; 
+        width:35px; 
+        height:35px;
+    }
+    .model_button:hover {
+        cursor: pointer;
+    }
+    dialog {
+        margin: auto;
+        color: var(--text-color);
+        padding: 1rem 3rem;
+        background: #252525;
+        width: 500px;
+        padding-top: 2rem;
+        border-radius: 20px;
+        border: 0;
+        box-shadow: 0 5px 30px 0 var(--box-shadow);
+        animation: fadeIn 1s ease both;
+	&::backdrop {
+		animation: fadeIn 1s ease both;
+		background: rgb(0, 0, 0, 0.5);
+		z-index: 2;
+	}
+        .x {
+            filter: grayscale(1);
+            border: none;
+            background: none;
+            position: absolute;
+            top: 15px;
+            right: 10px;
+            transition: ease filter, transform 0.3s;
+            cursor: pointer;
+            transform-origin: center;
+            &:hover {
+                filter: grayscale(0);
+                transform: scale(1.1);
+            }
+        }
+    }
+    .dailog_content {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .header img {
+        height: 75px;
+        border-radius: 50%;
+        margin-right: 20px;
+    }
+    div p {
+        font-weight: 700;
+    }
+    .room_content {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .profile {
+        display: flex;
+        flex-direction: row;
+        margin: 10px 0;
+        align-items: center;
+    }
+    .profile_info {
+        margin: 0 10px;
+    }
 </style>
