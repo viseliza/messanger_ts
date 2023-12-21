@@ -27,8 +27,17 @@ export class MessagesService {
     });
   }
 
-  async findAll(room) {
-    return await this.prisma.message.findMany({ where: { room_id: room.id } });
+  async findAll(data) {
+    const take = data.row + 100;
+    const response = await this.prisma.message.findMany({ 
+			where: { 
+			  room_id: data.id
+			},
+			skip: data.row,
+      take
+		});
+	  
+		return response;
   }
 
   update(id: number, updateMessageDto: UpdateMessageDto) {

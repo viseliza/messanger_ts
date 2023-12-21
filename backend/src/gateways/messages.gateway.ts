@@ -25,9 +25,9 @@ export class MessagesGateway {
     return message;
   }
 
-  @SubscribeMessage('findAllMessages')
-  findAll(@MessageBody() room_id: number) {
-    return this.messagesService.findAll(room_id);
+  @SubscribeMessage('takeMessages')
+  async findAll(@MessageBody() {room_id, row}) {
+    return await this.messagesService.findAll({ room_id, row });
   }
 
   @SubscribeMessage('join')

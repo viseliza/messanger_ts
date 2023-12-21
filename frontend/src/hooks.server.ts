@@ -48,6 +48,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       
       const api = new AppAPI('');
 
+      // 0.588 sec
       const profile = await api.getProfile(jwtUser.user_id);
       
       const sessionProfile: Profile = {

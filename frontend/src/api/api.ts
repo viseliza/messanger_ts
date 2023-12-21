@@ -8,7 +8,7 @@ import { Room } from '../models/Room.js';
 import { Message } from '../models/Message.js';
 
 export class AppAPI {
-    static API = new URL('http://localhost:3000/');
+    static API = new URL('http://localhost:18001/');
 
     #token;
     #defaultParams;

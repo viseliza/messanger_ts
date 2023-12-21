@@ -10,24 +10,38 @@
     import arrow_left from "$lib/images/arrow-left.png";
     import arrow_left_dark from "$lib/images/arrow-left_dark.png";
     import type { PageData } from "./$types";
+    import { onMount } from "svelte";
     export let data: PageData;
     
-    const socket = io("http://localhost:3000");
+    const socket = io("http://localhost:18001");
     $: count = data.profiles[0]._count.profiles;
+    let row = 0;
     let messages: Array<any> = [];
     let user_id = data.user.user_id;
     let profiles = data.profiles[0].profiles;
     let room_id = data.room.id;
+	let scroll: Element;
     
-    // let name = `${$page.data.user.first_name} ${$page.data.user.last_name}`;
     let text = "";
     $: room = data.room.name;
     let joined = true;
 
+    onMount(()=> {
+        scroll.addEventListener('scroll', function() {
+            if (scroll.scrollTop == 0) {
+                row += 100;
+                socket.emit("takeMessages", { room_id, row }, (response: any) => {
+                    response.length ? messages = [...messages, response] : row -= 100;
+                });
+            }
+        })
+    })
+
+
     socket.on("connect", () => {
         socket.emit("joinRoom", room);
 
-        socket.emit("findAllMessages", room_id, (response: any) => {
+        socket.emit("takeMessages", { room_id, row }, (response: any) => {
             messages = response;
         });
 
@@ -35,6 +49,7 @@
             messages = [...messages, message];
         });
     });
+
 
     const sendMessage = () => {
         if (text.trim()) {
@@ -95,14 +110,14 @@
             {:else}
                 <img class="nav_icon" src={points_dark} alt="" />
             {/if}
-            <button class="model_button" onclick="window.dialog.showModal();">
+            <button title="Показать информацию" class="model_button" onclick="window.dialog.showModal();">
                 <img style="width: 100%; height: 100%" id="icon" class="avatar" src={placeholder} alt="">
             </button>
 
         </div>
     </div>
     <!-- ./chat_header -->
-    <div class="chat_messages">
+    <div class="chat_messages" bind:this = "{scroll}">
         {#if !joined}
             <div>
                 <form>
@@ -242,7 +257,7 @@
     </div>
     <!-- ./chat_messages -->
     <div class="chat_footer">
-        <button>
+        <button title="Прикрепить файл">
             {#if theme == "white"}
                 <img id="icon" class="nav_icon" src={attachment} alt="" />
             {:else}
@@ -260,6 +275,7 @@
             bind:value={text}
         />
         <button
+            title="Отправить"
             type="submit"
             on:click={() => sendMessage()}
             on:keydown={on_key_down}
@@ -323,7 +339,7 @@
         flex: 1 1 auto;
     }
     .chat_footer {
-        height: 7vh;
+        height: 65px;
         border-radius: 0 0 15px 15px;
         background-color: var(--primary-head);
         display: flex;

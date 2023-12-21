@@ -10,6 +10,18 @@ export class RoomService {
 		return await this.prisma.room.findFirst({ where });
 	}
 
+	// получение первых 20 сообщений
+	// async get(where: Prisma.RoomWhereInput) {
+	// 	return await this.prisma.message.findMany({ 
+	// 		where: {
+	// 			id: {
+	// 				gte: 0,
+	// 				lte: 20
+	// 			}
+	// 		}
+	// 	});
+	// }
+
 	async lastMessage(data: Prisma.RoomWhereInput) {
 		return await this.prisma.room.findFirst({
 			select: {

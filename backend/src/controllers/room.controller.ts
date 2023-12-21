@@ -27,7 +27,6 @@ export class RoomController {
     @Get('/rooms/:name')
     async getLastMessage(@Param('name') name: string) {
         const message = await this.roomService.lastMessage({ name });
-        console.log(message.messages)
         return message.messages;
     }
 

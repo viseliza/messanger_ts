@@ -11,6 +11,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	const path = `src/lib/docs/1911 1981 1991 1992.xlsx`;
 	const schedule: string = await getSchedule(group, path, new Date().getDay() - 1);
 	const replacement: string = await getReplacemnt(group ,"src/lib/docs/30.10.2023.doc");
+    
     return { 
         profile,
         schedule: schedule.split("\n"),
